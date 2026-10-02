@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Baiza Sushi",
+    "slug": "baizasushi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/baiza icon.jpg",
+    "scheme": "android",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/baiza icon.jpg",
+        "backgroundColor": "#FCEFE6"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FCEFE6",
+          "image": "./src/assets/baiza logo.png",
+          "imageWidth": 76
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
