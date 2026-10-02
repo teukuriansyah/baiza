@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { Link } from "expo-router"
 import { User, MapPin, Heart, Bell, LogOut } from 'lucide-react-native';
 
 const Profile = () => {
@@ -29,27 +30,24 @@ const Profile = () => {
           <Text className="text-sm text-gray-600 font-medium">ACCOUNT HUB</Text>
         </View>
         <View className="px-4 py-2 bg-white rounded-xl">
-          <View className="border-b border-gray-200 py-3 flex-row gap-3 items-center">
-            <MapPin size={22} color="#374151" />
-            <View className="flex-1">
-              <Text className="text-base font-semibold">Saved Addresses</Text>
-              <Text className="text-xs text-gray-400">Real-time driver tracker flash deals</Text>
+          <Link href="/address">
+            <View className="border-b border-gray-200 py-3 flex-row gap-3 items-center">
+              <MapPin size={22} color="#374151" />
+              <View className="flex-1">
+                <Text className="text-base font-semibold">Saved Addresses</Text>
+                <Text className="text-xs text-gray-400">Real-time driver tracker flash deals</Text>
+              </View>
             </View>
-          </View>
-          <View className="border-b border-gray-200 py-3 flex-row gap-3 items-center">
-            <Heart size={22} color="#374151" />
-            <View className="flex-1">
-              <Text className="text-base font-semibold">My Favorites</Text>
-              <Text className="text-xs text-gray-400">Real-time driver tracker flash deals</Text>
+          </Link>
+          <Link href="/wishlist">
+            <View className="border-b border-gray-200 py-3 flex-row gap-3 items-center">
+              <Heart size={22} color="#374151" />
+              <View className="flex-1">
+                <Text className="text-base font-semibold">My Favorites</Text>
+                <Text className="text-xs text-gray-400">Real-time driver tracker flash deals</Text>
+              </View>
             </View>
-          </View>
-          <View className="py-3 flex-row gap-3 items-center">
-            <Bell size={22} color="#374151" />
-            <View className="flex-1">
-              <Text className="text-base font-semibold">Notifications</Text>
-              <Text className="text-xs text-gray-400">Real-time driver tracker flash deals</Text>
-            </View>
-          </View>
+          </Link>
         </View>
       </View>
 
