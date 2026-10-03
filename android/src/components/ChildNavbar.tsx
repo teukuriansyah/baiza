@@ -11,7 +11,7 @@ export default function ChildNavbar(props: Props) {
   return (
     <SafeAreaView edges={['top']}>
       <View className="flex-row items-center gap-3 px-5 py-2">
-        <Link href="/profile" asChild>
+        <Link href={`${props.title === "Search" || props.title === "Cart" ? "/":"/profile"}`} asChild>
           <ArrowLeft size={24} color="#000000" />
         </Link>
         <Text className="text-xl font-semibold text-gray-900">
