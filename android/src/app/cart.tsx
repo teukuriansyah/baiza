@@ -1,9 +1,8 @@
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
+import { Link } from "expo-router"
 import CartList from "../components/CartList";
 
-type Props = {}; // Sesuaikan dengan tipe props Anda
-
-const Cart = (props: Props) => {
+const Cart = () => {
   return (
     <View className="flex-1 relative">
       
@@ -31,9 +30,11 @@ const Cart = (props: Props) => {
           <Text className="text-red-600 font-bold text-2xl">Rp. Price</Text>
         </View>
         <View>
-          <Pressable className="bg-red-600 rounded-full px-5 py-3">
-            <Text className="text-white font-medium">Proceed to checkout</Text>
-          </Pressable>
+          <View className="bg-red-600 rounded-full px-5 py-3">
+            <Link href="/checkout">
+              <Text className="text-white font-medium">Proceed to checkout</Text>
+            </Link>
+          </View>
         </View>
       </View>
     </View>

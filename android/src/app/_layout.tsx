@@ -34,6 +34,7 @@ export default function RootLayout() {
       <Tabs.Screen name="address" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Address" /> }} />
       <Tabs.Screen name="wishlist" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Wishlist" /> }} />
       <Tabs.Screen name="cart" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Cart" /> }} />
+      <Tabs.Screen name="checkout" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Checkout" /> }} />
     </Tabs>
   );
 }
