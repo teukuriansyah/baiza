@@ -2,7 +2,7 @@ import axios from "axios"
 //import "dotenv/config"
 
 const api = axios.create({
-  baseURL:"https://estrogen-verbally-caution.ngrok-free.dev"
+  baseURL:""
 })
 
 export async function getData() {
