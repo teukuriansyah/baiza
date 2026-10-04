@@ -7,30 +7,13 @@ import "../../global.css";
 
 export default function RootLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          height: 64,
-          backgroundColor: "#FFFFFF",
-          borderTopWidth: 1,
-          borderTopColor: "#E5E7EB",
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-        tabBarItemStyle: {
-          justifyContent: "center",
-          alignItems: "center",
-          paddingVertical: 8,
-        },
-      }}
-    >
-      <Tabs.Screen name="index" options={{ title: "Home", header:() => <Navbar title="Home"/>, tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={Home} label="Home" /> }} />
-      <Tabs.Screen name="detailMenu" options={{ title: "Detail", tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={Home} label="Detail" />, headerShown:false }} />
-      <Tabs.Screen name="notification" options={{ title: "Notification", tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={Bell} label="Notification" />, header:() => <Navbar title="Notification"/> }} />
-      <Tabs.Screen name="order" options={{ title: "Order", tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={ShoppingBag} label="Order" />, header:() => <Navbar title="Order History"/> }} />
+    <Tabs screenOptions={{ tabBarShowLabel: false, tabBarStyle: { height: 65, backgroundColor: "#FFFFFF", borderTopWidth: 1, borderTopColor: "#E5E7EB", elevation: 0, shadowOpacity: 0 }, tabBarItemStyle: { justifyContent: "center", alignItems: "center" } }}>
+      <Tabs.Screen name="index" options={{ title: "Home", header: () => <Navbar title="Home" />, tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={Home} label="Home" /> }} />
+      <Tabs.Screen name="notification" options={{ title: "Notification", header: () => <Navbar title="Notification" />, tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={Bell} label="Notification" /> }} />
+      <Tabs.Screen name="order" options={{ title: "Order", header: () => <Navbar title="Order History" />, tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={ShoppingBag} label="Order" /> }} />
       <Tabs.Screen name="profile" options={{ title: "Profile", header: () => <Navbar title="Profile" />, tabBarIcon: ({ focused }) => <TabItem focused={focused} Icon={User} label="Profile" /> }} />
-      <Tabs.Screen name="search" options={{ title: "Search", href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Search" /> }} />
+      <Tabs.Screen name="detailMenu/[id]" options={{ href: null, headerShown: false, tabBarStyle: { display: "none" } }} />
+      <Tabs.Screen name="search" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Search" /> }} />
       <Tabs.Screen name="address" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Address" /> }} />
       <Tabs.Screen name="wishlist" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Wishlist" /> }} />
       <Tabs.Screen name="cart" options={{ href: null, tabBarStyle: { display: "none" }, header: () => <ChildNavbar title="Cart" /> }} />
@@ -42,11 +25,9 @@ export default function RootLayout() {
 function TabItem({ focused, Icon, label }: { focused: boolean; Icon: LucideIcon; label: string }) {
   const iconColor = focused ? "#FFFFFF" : "#8B4513";
   return (
-    <View className={`flex-col items-center justify-center py-5 px-3 rounded-xl min-w-[64px] ${focused ? "bg-red-600" : "bg-transparent"}`}>
-      <Icon size={20} color={iconColor} />
-      <Text className={`text-[10px] leading-3 text-center mt-1 ${focused ? "text-white font-semibold" : "text-[#8B4513] font-normal"}`} numberOfLines={1}>
-        {label}
-      </Text>
+    <View className={`flex-col items-center justify-center py-1.5 px-3 rounded-xl min-w-[60px] ${focused ? "bg-red-600" : "bg-transparent"}`}>
+      <Icon size={18} color={iconColor} />
+      <Text className={`text-[10px] leading-3 text-center mt-1 ${focused ? "text-white font-semibold" : "text-[#8B4513] font-normal"}`} numberOfLines={1}>{label}</Text>
     </View>
   );
 }

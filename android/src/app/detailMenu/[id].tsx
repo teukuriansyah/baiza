@@ -1,16 +1,31 @@
 import { View, Text, TextInput, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Minus, ArrowLeft, Heart } from 'lucide-react-native';
+import { useLocalSearchParams } from "expo-router";
+import { router } from 'expo-router';
+import { useState, useEffect } from "react"
+import { getDataById } from '@/services/Services';
 
 const DetailMenu = () => {
+  const { id } = useLocalSearchParams()
+  const [datas,setDatas] = useState<any>([])
+
+  const fetching = async() => {
+    const {data} = await getDataById(id)
+    setDatas(data)
+  }
+
+  useEffect(() => {
+    fetching()
+  },[])
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['bottom']}>
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 20 }}showsVerticalScrollIndicator={false}>
 
         {/* Background Image */}
         <View>
-          <ImageBackground source={require("../assets/screen.png")} className="px-5 py-12 flex-row items-between h-[300px] justify-between">
-            <Pressable className="bg-gray-600/40 rounded-full aspect-square p-6 items-center justify-center w-9">
+          <ImageBackground source={{ uri:datas?.imageUrl }} className="px-5 py-12 flex-row items-between h-[300px] justify-between">
+            <Pressable className="bg-gray-600/40 rounded-full aspect-square p-6 items-center justify-center w-9" onPress={() => router.push("/")}>
               <ArrowLeft size={24} color="white" />
             </Pressable>
             <Pressable className="bg-gray-600/40 p-6 rounded-full aspect-square items-center justify-center w-9">
@@ -22,18 +37,18 @@ const DetailMenu = () => {
         {/* Title */}
         <View className="px-5 py-3">
           <View className="flex-row items-center justify-between">
-            <Text className="text-3xl font-bold">Title</Text>
-            <Text className="text-3xl font-bold text-red-600">Rp. Price</Text>
+            <Text className="text-3xl font-bold flex-1">{datas?.name}</Text>
+            <Text className="text-3xl font-bold text-red-600">Rp. {datas.price}</Text>
           </View>
           <View className="mt-1">
-            <Text className="font-semibold">⭐ 4.8</Text>
+            <Text className="font-semibold">⭐ {datas.rating}</Text>
           </View>
         </View>
 
         {/* Context */}
         <View className="px-5 py-3">
           <View className="px-4 py-2 bg-gray-200 rounded-xl">
-            <Text className="text-red-900">Context</Text>
+            <Text className="text-red-900">{datas?.description}</Text>
           </View>
         </View>
 
@@ -71,7 +86,7 @@ const DetailMenu = () => {
       <View className="px-5 py-3 flex-row items-center justify-between bg-white border-t border-gray-100">
         <View>
           <Text className="text-gray-400">Total Price</Text>
-          <Text className="text-red-600 text-2xl font-semibold">Rp. Price</Text>
+          <Text className="text-red-600 text-2xl font-semibold">Rp. {datas?.price}</Text>
         </View>
         <Pressable className="rounded-xl px-6 py-3 bg-red-600 active:bg-red-700">
           <Text className="text-white font-semibold">Add to Cart</Text>

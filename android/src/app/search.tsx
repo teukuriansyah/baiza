@@ -1,11 +1,14 @@
 import { View, Text, TextInput, ScrollView } from 'react-native';
 import { Search } from 'lucide-react-native';
-import { useRouter } from "expo-router"
-import { useState } from "react"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import { useState, useEffect } from "react"
 import ListHome from "../components/ListHome";
+import { getDataBySearch } from '@/services/Services';
 
 const search = () => {
   const route = useRouter()
+  const { q } = useLocalSearchParams()
+  const [datas, setDatas] = useState<any>()
   const [searchQuery, onChangeSearchQuery] = useState("")
 
   const submitSearch = () => {
@@ -17,6 +20,16 @@ const search = () => {
     }
     onChangeSearchQuery("")
   }
+
+  const fetching = async() => {
+    const data = await getDataBySearch(q)
+    console.log(data)
+    setDatas(data)
+  }
+
+  useEffect(() => {
+    fetching()
+  },[])
   
   return (
     <ScrollView>
@@ -30,10 +43,10 @@ const search = () => {
 
       <View className="px-5 py-3 mb-6">
         <View className="mb-3">
-          <Text className="text-sm text-gray-400">8 Result found</Text>
+          <Text className="text-sm text-gray-400">{datas?.length} Result found</Text>
         </View>
-        <View>
-          <ListHome />
+        <View className="gap-4">
+          {datas?.map((d:any,i:number) => <ListHome key={i} title={d.name} context={d.description} price={d.price} img={d.imageUrl} rating={d.rating}/>)}
         </View>
       </View>
     </ScrollView>

@@ -2,15 +2,16 @@ import { Text, View, TextInput, ScrollView } from "react-native";
 import { Search } from 'lucide-react-native';
 import { useRouter } from "expo-router"
 import { useState, useEffect } from "react"
-import { getData } from "../services/Services.ts"
+import { getData } from "../services/Services"
 import ListHome from "../components/ListHome";
 import CardHome from "../components/CardHome";
 
 export default function Index() {
   const route = useRouter()
-  const [datas, setDatas] = useState([])
+  const [datas, setDatas] = useState<any>([])
+  const [random,setRandom] = useState(0)
   const [searchQuery, onChangeSearchQuery] = useState("")
-  const [recommendation, setRecommendation] = useState("")
+  const [recommendation, setRecommendation] = useState<any>("")
 
   const submitSearch = () => {
     if(searchQuery !== "") {
@@ -24,9 +25,10 @@ export default function Index() {
 
   const fetchingData = async() => {
     const {data} = await getData()
-    const random = Math.floor(Math.random()*20)
+    const randoms = Math.floor(Math.random()*20)
+    setRandom(randoms)
     setDatas(data?.menuItems)
-    setRecommendation(data?.menuItems[random])
+    setRecommendation(data?.menuItems[randoms])
   }
 
   useEffect(() => {
@@ -55,7 +57,7 @@ export default function Index() {
           <Text className="text-sm text-gray-400">Handpicked culinary delights</Text>
         </View>
         <View>
-          <ListHome title={recommendation.name} rating={recommendation.rating} context={recommendation.description} price={recommendation.price} img={recommendation.imageUrl} />
+          <ListHome link={random} title={recommendation.name} rating={recommendation.rating} context={recommendation.description} price={recommendation.price} img={recommendation.imageUrl} />
         </View>
       </View>
 
@@ -66,7 +68,7 @@ export default function Index() {
           <Text className="text-sm text-gray-400">Master crafted, highly rated</Text>
         </View>
         <View className="flex-row flex-wrap justify-between">
-          {datas?.map((d,i) => <View className="w-[48%] mb-3" key={i}><CardHome title={d.name} context={d.description} price={d.price} img={d.imageUrl} rating={d.rating} /></View>)}
+          {datas?.map((d:any,i:number) => <View className="w-[48%] mb-3" key={i}><CardHome link={i+1} title={d.name} context={d.description} price={d.price} img={d.imageUrl} rating={d.rating} /></View>)}
         </View>
       </View>
       
