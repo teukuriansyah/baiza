@@ -1,13 +1,16 @@
 import { Text, View, TextInput, ScrollView } from "react-native";
 import { Search } from 'lucide-react-native';
 import { useRouter } from "expo-router"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { getData } from "../services/Services.ts"
 import ListHome from "../components/ListHome";
 import CardHome from "../components/CardHome";
 
 export default function Index() {
   const route = useRouter()
+  const [datas, setDatas] = useState([])
   const [searchQuery, onChangeSearchQuery] = useState("")
+  const [recommendation, setRecommendation] = useState("")
 
   const submitSearch = () => {
     if(searchQuery !== "") {
@@ -18,6 +21,17 @@ export default function Index() {
     }
     onChangeSearchQuery("")
   }
+
+  const fetchingData = async() => {
+    const {data} = await getData()
+    const random = Math.floor(Math.random()*20)
+    setDatas(data?.menuItems)
+    setRecommendation(data?.menuItems[random])
+  }
+
+  useEffect(() => {
+    fetchingData()
+  },[])
   return (
     <ScrollView className="flex-1 bg-gray-50">
       {/* Greetings */}
@@ -34,6 +48,17 @@ export default function Index() {
         </View>
       </View>
 
+      {/* Chef Recommendations */}
+      <View className="px-5 py-3">
+        <View className="mb-3">
+          <Text className="text-xl font-semibold text-gray-900">Chef Recommendations</Text>
+          <Text className="text-sm text-gray-400">Handpicked culinary delights</Text>
+        </View>
+        <View>
+          <ListHome title={recommendation.name} rating={recommendation.rating} context={recommendation.description} price={recommendation.price} img={recommendation.imageUrl} />
+        </View>
+      </View>
+
       {/* Popular */}
       <View className="px-5 py-3">
         <View className="mb-3">
@@ -41,23 +66,10 @@ export default function Index() {
           <Text className="text-sm text-gray-400">Master crafted, highly rated</Text>
         </View>
         <View className="flex-row flex-wrap justify-between">
-          <View className="w-[48%] mb-3"><CardHome /></View>
-          <View className="w-[48%] mb-3"><CardHome /></View>
-          <View className="w-[48%] mb-3"><CardHome /></View>
-          <View className="w-[48%] mb-3"><CardHome /></View>
+          {datas?.map((d,i) => <View className="w-[48%] mb-3" key={i}><CardHome title={d.name} context={d.description} price={d.price} img={d.imageUrl} rating={d.rating} /></View>)}
         </View>
       </View>
-
-      {/* Chef Recommendations */}
-      <View className="px-5 py-3 mb-6">
-        <View className="mb-3">
-          <Text className="text-xl font-semibold text-gray-900">Chef Recommendations</Text>
-          <Text className="text-sm text-gray-400">Handpicked culinary delights</Text>
-        </View>
-        <View>
-          <ListHome />
-        </View>
-      </View>
+      
     </ScrollView>
   );
 }
