@@ -1,7 +1,13 @@
 import { View, Text } from 'react-native'
 import { Home } from 'lucide-react-native'
 
-export default function CardAddress() {
+interface Props {
+  user:string;
+  hp:string;
+  address:string
+}
+
+export default function CardAddress(props:Props) {
   return (
     <View className="rounded-lg bg-white px-5 py-3 shadow-sm border-l-4 border-red-600">
       <View className="flex-row items-center gap-2">
@@ -11,11 +17,11 @@ export default function CardAddress() {
 
       <View className="mt-1">
         <View className="flex-row items-center gap-2">
-          <Text className="text-sm font-medium">User</Text>
-          <Text className="text-sm text-gray-500">+62 123456789</Text>
+          <Text className="text-sm font-medium">{props.user}</Text>
+          <Text className="text-sm text-gray-500">{props.hp}</Text>
         </View>
         <View className="mt-1 flex-row items-center">
-          <Text className="text-base text-gray-700">Jl. Jalan</Text>
+          <Text className="text-base text-gray-700">{props.address}</Text>
         </View>
       </View>
     </View>

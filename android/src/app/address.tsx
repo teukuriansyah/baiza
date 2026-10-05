@@ -74,7 +74,7 @@ export default function Address() {
         <Text className="mb-2 text-lg font-semibold">
           Registered Delivery Places
         </Text>
-        <CardAddress />
+        <CardAddress user={user?.name} address={user?.address} hp={user?.hp}/>
       </View>
     </ScrollView>
   )

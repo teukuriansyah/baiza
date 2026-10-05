@@ -1,11 +1,21 @@
 import { View, Text } from 'react-native';
 import { Link } from "expo-router"
-import { User, MapPin, Heart, Bell, LogOut } from 'lucide-react-native';
+import { useState, useEffect } from "react"
+import { getDataUser } from '@/services/UserServices';
+import { User, MapPin, Heart, LogOut } from 'lucide-react-native';
 
 const Profile = () => {
+  const [user, setUser] = useState<any>()
+  const fetchingUser = async() => {
+    const userData = await getDataUser()
+    setUser(userData?.data)
+  }
+  
+    useEffect(() => {
+      fetchingUser()
+    },[])
   return (
     <View className="flex-1 bg-gray-100">
-
       {/* Profile */}
       <View className="px-5 py-3">
         <View className="bg-white rounded-xl p-4 flex-row items-center gap-4">
@@ -14,11 +24,11 @@ const Profile = () => {
           </View>
           <View className="flex-1">
             <View>
-              <Text className="text-xl font-semibold">User</Text>
+              <Text className="text-xl font-semibold">{user?.name}</Text>
             </View>
             <View className="mt-1">
-              <Text className="text-red-700 text-sm">email@email.com</Text>
-              <Text className="text-sm text-gray-600">+62 123456789</Text>
+              <Text className="text-red-700 text-sm">{user?.email}</Text>
+              <Text className="text-sm text-gray-600">{user?.hp}</Text>
             </View>
           </View>
         </View>
