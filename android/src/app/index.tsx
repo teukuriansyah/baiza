@@ -1,39 +1,56 @@
-import { Text, View, TextInput, ScrollView } from "react-native";
+import { Text, View, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Search } from 'lucide-react-native';
-import { useRouter } from "expo-router"
-import { useState, useEffect } from "react"
-import { getData } from "../services/Services"
+import { useRouter } from "expo-router";
+import { useState, useEffect } from "react";
+import { getData, getCategory, getDataByCategory } from "../services/Services";
 import ListHome from "../components/ListHome";
 import CardHome from "../components/CardHome";
 
 export default function Index() {
-  const route = useRouter()
-  const [datas, setDatas] = useState<any>([])
-  const [random,setRandom] = useState(0)
-  const [searchQuery, onChangeSearchQuery] = useState("")
-  const [recommendation, setRecommendation] = useState<any>("")
+  const route = useRouter();
+  const [datas, setDatas] = useState<any[]>([]);
+  const [category, setCategory] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [random, setRandom] = useState(0);
+  const [searchQuery, onChangeSearchQuery] = useState("");
+  const [recommendation, setRecommendation] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const submitSearch = () => {
-    if(searchQuery !== "") {
-      route.push({
-        pathname:"/search",
-        params:{q:searchQuery}
-      })
+    if (searchQuery.trim() !== "") {
+      route.push({ pathname: "/search", params: { q: searchQuery } });
+      onChangeSearchQuery("");
     }
-    onChangeSearchQuery("")
-  }
+  };
 
-  const fetchingData = async() => {
-    const {data} = await getData()
-    const randoms = Math.floor(Math.random()*20)
-    setRandom(randoms)
-    setDatas(data?.menuItems)
-    setRecommendation(data?.menuItems[randoms])
-  }
+  const fetchingData = async () => {
+    try {
+      setLoading(true);
+      const cat = await getCategory();
+      setCategory(cat || []);
 
-  useEffect(() => {
-    fetchingData()
-  },[])
+      if (selectedCategory === "all" || selectedCategory === "") {
+        const res = await getData();
+        const menuItems = res?.data?.menuItems || [];
+        setDatas(menuItems);
+        if (menuItems.length > 0) {
+          const randoms = Math.floor(Math.random() * menuItems.length);
+          setRandom(randoms);
+          setRecommendation(menuItems[randoms]);
+        }
+      } else {
+        const data = await getDataByCategory(selectedCategory);
+        setDatas(data || []);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchingData(); }, [selectedCategory]);
+
   return (
     <ScrollView className="flex-1 bg-gray-50">
       {/* Greetings */}
@@ -46,20 +63,27 @@ export default function Index() {
       <View className="px-5 py-2">
         <View className="bg-white px-4 py-1.5 rounded-full flex-row items-center gap-3 border border-gray-100 shadow-sm">
           <Search size={20} color="#6b7280" />
-          <TextInput className="flex-1 py-1.5 text-base text-gray-800" placeholder="Search sushi, ramen, donburi" placeholderTextColor="#9ca3af" value={searchQuery} onChangeText={onChangeSearchQuery} onSubmitEditing={submitSearch}/>
+          <TextInput className="flex-1 py-1.5 text-base text-gray-800" placeholder="Search sushi, ramen, donburi" placeholderTextColor="#9ca3af" value={searchQuery} onChangeText={onChangeSearchQuery} onSubmitEditing={submitSearch} />
         </View>
       </View>
 
       {/* Chef Recommendations */}
-      <View className="px-5 py-3">
-        <View className="mb-3">
-          <Text className="text-xl font-semibold text-gray-900">Chef Recommendations</Text>
-          <Text className="text-sm text-gray-400">Handpicked culinary delights</Text>
+      {recommendation && (
+        <View className="px-5 py-3">
+          <View className="mb-3">
+            <Text className="text-xl font-semibold text-gray-900">Chef Recommendations</Text>
+            <Text className="text-sm text-gray-400">Handpicked culinary delights</Text>
+          </View>
+          <View>
+            <ListHome link={random} title={recommendation?.name} rating={recommendation?.rating} context={recommendation?.description} price={recommendation?.price} img={recommendation?.imageUrl} />
+          </View>
         </View>
-        <View>
-          <ListHome link={random} title={recommendation.name} rating={recommendation.rating} context={recommendation.description} price={recommendation.price} img={recommendation.imageUrl} />
-        </View>
-      </View>
+      )}
+
+      {/* Category */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 py-3 gap-4">
+        {category?.map((d: any, i: number) => <Pressable className={`${(selectedCategory === d?.category) ? "bg-red-600" : "bg-gray-300"} p-2 rounded-full`} key={i} onPress={() => setSelectedCategory(selectedCategory === d?.category ? "all" : d?.category)}><Text className={selectedCategory === d?.category ? "text-white font-semibold" : "text-gray-600"}>{d?.name}</Text></Pressable>)}
+      </ScrollView>
 
       {/* Popular */}
       <View className="px-5 py-3">
@@ -67,11 +91,8 @@ export default function Index() {
           <Text className="text-xl font-semibold text-gray-900">Popular</Text>
           <Text className="text-sm text-gray-400">Master crafted, highly rated</Text>
         </View>
-        <View className="flex-row flex-wrap justify-between">
-          {datas?.map((d:any,i:number) => <View className="w-[48%] mb-3" key={i}><CardHome link={i+1} title={d.name} context={d.description} price={d.price} img={d.imageUrl} rating={d.rating} /></View>)}
-        </View>
+        {loading ? <ActivityIndicator size="large" color="#dc2626" /> : <View className="flex-row flex-wrap justify-between">{datas?.map((d: any, i: number) => <View className="w-[48%] mb-3" key={i}><CardHome link={i + 1} title={d?.name} context={d?.description} price={d?.price} img={d?.imageUrl} rating={d?.rating} /></View>)}</View>}
       </View>
-      
     </ScrollView>
   );
 }
