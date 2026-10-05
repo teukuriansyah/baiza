@@ -3,6 +3,7 @@ import cors from "cors"
 import ngrok from "@ngrok/ngrok"
 import "dotenv/config"
 import menuRoute from "./route/menuRoute.js"
+import userRoute from "./route/userRoute.js"
 
 const app = express()
 
@@ -10,6 +11,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use(menuRoute)
+app.use(userRoute)
 
 app.listen(3000,async() => {
   const forwarder = await ngrok.forward({

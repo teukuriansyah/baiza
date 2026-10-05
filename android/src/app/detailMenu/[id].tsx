@@ -4,7 +4,7 @@ import { Plus, Minus, ArrowLeft, Heart } from 'lucide-react-native';
 import { useLocalSearchParams } from "expo-router";
 import { router } from 'expo-router';
 import { useState, useEffect } from "react"
-import { getDataById } from '@/services/Services';
+import { getDataById } from '@/services/MenuServices';
 
 const DetailMenu = () => {
   const { id } = useLocalSearchParams()

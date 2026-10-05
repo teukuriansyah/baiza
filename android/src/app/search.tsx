@@ -3,7 +3,7 @@ import { Search } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState, useEffect } from "react"
 import ListHome from "../components/ListHome";
-import { getDataBySearch } from '@/services/Services';
+import { getDataBySearch } from '@/services/MenuServices';
 
 const search = () => {
   const route = useRouter()

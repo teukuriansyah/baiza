@@ -1,5 +1,4 @@
 import axios from "axios"
-import "dotenv/config"
 
 const api = axios.create({
   baseURL:""
@@ -16,7 +15,7 @@ export async function getDataByCategory(category:string) {
     return data
   }
   else {
-    return data.data.menuItems.filter((d,i) => d.category === category ? d : null) 
+    return data.data.menuItems.filter((d:any,i:number) => d.category === category ? d : null) 
   }
 }
 

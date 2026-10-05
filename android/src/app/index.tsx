@@ -2,7 +2,7 @@ import { Text, View, TextInput, ScrollView, Pressable, ActivityIndicator } from 
 import { Search } from 'lucide-react-native';
 import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
-import { getData, getCategory, getDataByCategory } from "../services/Services";
+import { getData, getCategory, getDataByCategory } from "../services/MenuServices";
 import ListHome from "../components/ListHome";
 import CardHome from "../components/CardHome";
 

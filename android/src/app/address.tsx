@@ -1,8 +1,33 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { MapPin, Navigation } from 'lucide-react-native'
+import { useState, useEffect } from "react"
+import { getDataUser } from '@/services/UserServices';
+import * as Location from 'expo-location';
 import CardAddress from '@/components/CardAddress'
 
 export default function Address() {
+  const [user, setUser] = useState<any>()
+  const [location,setLocation] = useState<Location.LocationObject | null>(null)
+  const [err, setErr] = useState<any>()
+
+  async function getCurrentLocation() {  
+    let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErr('Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+  }
+
+  const fetchingUser = async() => {
+    const userData = await getDataUser()
+    setUser(userData?.data)
+  }
+
+  useEffect(() => {
+    fetchingUser()
+  },[])
   return (
     <ScrollView>
       <View className="px-5 py-3">
@@ -27,12 +52,12 @@ export default function Address() {
 
               <View className="mt-2 self-start rounded bg-gray-400 px-2 py-0.5">
                 <Text className="text-xs font-medium text-gray-700">
-                  Lat: , Lng :
+                  Lat: {location?.coords.latitude}, Lng : {location?.coords.longitude}
                 </Text>
               </View>
 
               <View className="mt-4">
-                <Pressable className="flex-row items-center justify-center gap-2 rounded-full bg-red-800 px-4 py-3">
+                <Pressable onPress={() => getCurrentLocation()} className="flex-row items-center justify-center gap-2 rounded-full bg-red-800 px-4 py-3">
                   <Navigation size={18} color="#ffffff" />
                   <Text className="font-semibold text-white">
                     Use Current Location
