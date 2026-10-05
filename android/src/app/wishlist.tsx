@@ -1,8 +1,19 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import { useState, useEffect } from "react"
 import CardWishlist from '@/components/CardWishlist'
+import { getWishlist } from '@/services/UserServices'
 
 export default function wishlist() {
+  const [data, setData] = useState()
+
+  const fetching = async() => {
+    const rawData = await getWishlist()
+    setData(rawData)
+  }
+
+  useEffect(() => {
+    fetching()
+  },[])
   return (
     <View>
       <View className='px-5 py-3'>

@@ -13,3 +13,8 @@ export async function getDataNotification() {
   const { data } = await api.get("/notification")
   return data
 }
+
+export async function getWishlist() {
+  const { data } = await api.get("/wishlist")
+  return data
+}
