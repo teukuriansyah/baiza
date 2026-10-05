@@ -3,12 +3,14 @@ import { Search } from 'lucide-react-native';
 import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
 import { getData, getCategory, getDataByCategory } from "../services/MenuServices";
+import { getWishlist, postWishlist } from "@/services/UserServices";
 import ListHome from "../components/ListHome";
 import CardHome from "../components/CardHome";
 
 export default function Index() {
   const route = useRouter();
   const [datas, setDatas] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<any>([])
   const [category, setCategory] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [random, setRandom] = useState(0);
@@ -27,6 +29,10 @@ export default function Index() {
     try {
       setLoading(true);
       const cat = await getCategory();
+      const rawWishlist = await getWishlist()
+
+      setWishlist(rawWishlist.data)
+      console.log(rawWishlist)
       setCategory(cat || []);
 
       if (selectedCategory === "all" || selectedCategory === "") {

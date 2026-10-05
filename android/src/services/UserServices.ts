@@ -18,3 +18,10 @@ export async function getWishlist() {
   const { data } = await api.get("/wishlist")
   return data
 }
+
+export async function postWishlist(id:string) {
+  const { data } = await api.post("/wishlist",{
+    idMenu:id
+  })
+  return data
+}
