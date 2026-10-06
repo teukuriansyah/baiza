@@ -55,7 +55,13 @@ export default function Index() {
     }
   };
 
-  useEffect(() => { fetchingData(); }, [selectedCategory]);
+  const afterWishlist = async(id) => {
+    if(wishlist.indexOf(id) <= 0) {
+      await postWishlist(id)
+    }
+  }
+
+  useEffect(() => { fetchingData(); }, [selectedCategory,wishlist]);
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
@@ -97,7 +103,7 @@ export default function Index() {
           <Text className="text-xl font-semibold text-gray-900">Popular</Text>
           <Text className="text-sm text-gray-400">Master crafted, highly rated</Text>
         </View>
-        {loading ? <ActivityIndicator size="large" color="#dc2626" /> : <View className="flex-row flex-wrap justify-between">{datas?.map((d: any, i: number) => <View className="w-[48%] mb-3" key={i}><CardHome link={i + 1} title={d?.name} context={d?.description} price={d?.price} img={d?.imageUrl} rating={d?.rating} /></View>)}</View>}
+        {loading ? <ActivityIndicator size="large" color="#dc2626" /> : <View className="flex-row flex-wrap justify-between">{datas?.map((d: any, i: number) => <View className="w-[48%] mb-3" key={i}><CardHome link={i + 1} title={d?.name} context={d?.description} price={d?.price} img={d?.imageUrl} rating={d?.rating} like={wishlist.indexOf(d?.idMenu) > 0} press={() => afterWishlist(d?.idMenu)}/></View>)}</View>}
       </View>
     </ScrollView>
   );

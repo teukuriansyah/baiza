@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const api = axios.create({
-  baseURL:""
+  baseURL:"https://estrogen-verbally-caution.ngrok-free.dev"
 })
 
 export async function getData() {

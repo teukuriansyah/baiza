@@ -9,6 +9,7 @@ interface Props {
   price: number;
   img: string;
   rating: number;
+  like:boolean;
 }
 
 const CardHome = (props: Props) => {
@@ -25,7 +26,7 @@ const CardHome = (props: Props) => {
               onPress={(e) => e.stopPropagation()} 
               className="bg-white/80 p-2 rounded-full items-center justify-center"
             >
-              <Heart size={20} color="#374151" />
+              <Heart size={20} color={like ? "red" : "#374151"} />
             </Pressable>
           </ImageBackground>
         </View>
