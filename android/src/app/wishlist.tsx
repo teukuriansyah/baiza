@@ -8,7 +8,6 @@ export default function Wishlist() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch daftar wishlist dari backend
   const fetching = useCallback(async () => {
     try {
       setLoading(true);
@@ -71,7 +70,7 @@ export default function Wishlist() {
           data.map((item: any, index: number) => {
             const menuId = item?.idMenu || item?.id || item?._id;
             return (
-              <CardWishlist key={menuId || index} onDelete={() => handleDeleteWishlist(menuId)}/>
+              <CardWishlist key={menuId || index} title={item?.name} context={item?.description} image={item?.imageUrl} link={index} onDelete={() => handleDeleteWishlist(menuId)}/>
             );
           })
         )}
