@@ -79,4 +79,18 @@ route.post("/wishlist", async (req, res) => {
   }
 });
 
+route.delete("/wishlist/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const datas = await Wishlist.destroy({
+      where:{
+        idMenu:id
+      }
+    });
+    res.status(200).json({ status: 200, data: datas, message: `${id} produk berhasil dihapus` });
+  } catch (error) {
+    res.status(500).json({ status: 500, message: error.message });
+  }
+});
+
 export default route;

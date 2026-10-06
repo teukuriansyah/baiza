@@ -13,7 +13,7 @@ interface Props {
 
 const ListHome = (props: Props) => {
   return (
-    <Link href={`/detailMenu/${props.link}`} asChild>
+    <Link href={`/detailMenu/${props.link+1}`} asChild>
       <Pressable className="bg-white px-4 py-4 rounded-xl flex-row gap-4">
         <View>
           <Image className="h-20 aspect-square rounded-xl" source={{ uri: props.img }} />

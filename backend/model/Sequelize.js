@@ -5,7 +5,7 @@ export const sequelize = new Sequelize({
   dialect: MySqlDialect,
   database: 'baiza',
   user: 'root',
-  password: 'root',
+  password: '',
   host: 'localhost',
   port: 3306,
 });

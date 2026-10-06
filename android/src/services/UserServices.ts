@@ -25,3 +25,8 @@ export async function postWishlist(id:string) {
   })
   return data
 }
+
+export async function deleteWishlist(id:string) {
+  const { data } = await api.delete(`/wishlist/${id}`)
+  return data
+}
