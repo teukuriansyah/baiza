@@ -93,4 +93,24 @@ route.delete("/wishlist/:id", async (req, res) => {
   }
 });
 
+route.get("/orderHistory", (req, res) => {
+  res.status(200).json({
+    status: 200,
+    message: "Get history order successful",
+    items: [
+      {
+        menuId: "MENU_01",
+        name: "Salmon Aburi Roll",
+        japaneseName: "サーモンあぶりロール",
+        category: "Sushi",
+        unitPrice: 45000,
+        quantity: 2,
+        subtotal: 90000,
+        createdAt:"2026-10-06T18:30:15.000Z",
+        imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop&q=80",
+      }
+    ]
+  });
+});
+
 export default route;

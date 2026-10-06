@@ -2,7 +2,11 @@ import { View, Text, Image } from 'react-native';
 import { Check } from 'lucide-react-native';
 
 interface Props {
-  // Define your props here
+  title:string;
+  date:any;
+  image:string;
+  price:number;
+  context:string
 }
 
 const ListOrder = (props: Props) => {
@@ -14,22 +18,22 @@ const ListOrder = (props: Props) => {
         </View>
         <View>
           <Text className="font-medium">Delivered</Text>
-          <Text className="text-sm text-red-900">tanggal</Text>
+          <Text className="text-sm text-red-900">{props.date}</Text>
         </View>
       </View>
       
       <View className="mt-3 flex-row justify-between">
         <View className="flex-row items-center gap-2">
           <View>
-            <Image className="h-12 rounded-xl aspect-square" source={ require("../assets/screen.png") } />
+            <Image className="h-12 rounded-xl aspect-square" source={{ uri: props.image}} />
           </View>
           <View>
-            <Text className="text-xl font-medium">Title</Text>
-            <Text className="text-sm">Context</Text>
+            <Text className="text-xl font-medium">{props.title.split("").map((d:string,i:number) => i < 6 ? d : i >= 6 && i < 9 ? "." : null)}</Text>
+            <Text className="text-sm">Lorem ipsum dolor sit</Text>
           </View>
         </View>
         <View>
-          <Text className="text-xl font-medium">Rp. Price</Text>
+          <Text className="text-xl font-medium">Rp. {props.price}</Text>
         </View>
       </View>
     </View>

@@ -68,7 +68,6 @@ export default function Index() {
     if (!id) return;
     const isExist = wishlist.some((wItem) => String(wItem) === String(id));
     
-    // Optimistic Update
     if (!isExist) {
       setWishlist((prev) => [...prev, id]);
     } else {
@@ -87,7 +86,6 @@ export default function Index() {
     }
   };
 
-  // Refetch data & wishlist tiap kali halaman ini dapat focus
   useFocusEffect(
     useCallback(() => {
       fetchWishlist();

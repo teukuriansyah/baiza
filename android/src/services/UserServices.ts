@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const api = axios.create({
-  baseURL:""
+  baseURL:"https://estrogen-verbally-caution.ngrok-free.dev"
 })
 
 export async function getDataUser() {
@@ -28,5 +28,10 @@ export async function postWishlist(id:string) {
 
 export async function deleteWishlist(id:string) {
   const { data } = await api.delete(`/wishlist/${id}`)
+  return data
+}
+
+export async function getOrderHistory() {
+  const { data } = await api.get(`/orderHistory`)
   return data
 }

@@ -3,17 +3,45 @@ import { useState, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
 import CardWishlist from '@/components/CardWishlist';
 import { getWishlist, deleteWishlist } from '@/services/UserServices';
+import { getData } from '@/services/MenuServices';
 
 export default function Wishlist() {
-  const [data, setData] = useState<any[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetching = useCallback(async () => {
     try {
       setLoading(true);
       const rawData = await getWishlist();
-      const wishlistItems = rawData?.data || rawData || [];
-      setData(Array.isArray(wishlistItems) ? wishlistItems : []);
+      const rawMenu = await getData();
+
+      // Ekstrak wishlist IDs
+      const rawWishlist = rawData?.data || rawData || [];
+      const wishlistArray = Array.isArray(rawWishlist) ? rawWishlist : [];
+      const wishlistIds = wishlistArray.map((wItem: any) => {
+        if (typeof wItem === 'object' && wItem !== null) {
+          return String(wItem?.idMenu || wItem?.id || wItem?._id || '');
+        }
+        return String(wItem);
+      }).filter(Boolean);
+
+      // Ekstrak Menu List
+      const menuList = rawMenu?.data?.menuItems || rawMenu?.data || rawMenu || [];
+      const menuData = Array.isArray(menuList) ? menuList : [];
+
+      // Match item SEKANGLIAGUS menyimpan `originalIndex`-nya dari array menu utama
+      const matchedData: any[] = [];
+      menuData.forEach((mItem: any, index: number) => {
+        const mMenuId = String(mItem?.idMenu || mItem?.id || mItem?._id || '');
+        if (wishlistIds.includes(mMenuId)) {
+          matchedData.push({
+            ...mItem,
+            originalIndex: index, // Simpan index asli menu dari list utama
+          });
+        }
+      });
+
+      setWishlistItems(matchedData);
     } catch (error) {
       console.error("Gagal mengambil data wishlist:", error);
     } finally {
@@ -30,12 +58,11 @@ export default function Wishlist() {
   const handleDeleteWishlist = async (targetId: any) => {
     if (!targetId) return;
 
-    const previousData = [...data];
+    const previousData = [...wishlistItems];
 
-  
-    setData((prev) => 
+    setWishlistItems((prev) =>
       prev.filter((item) => {
-        const itemId = item?.idMenu || item?.id || item?._id || item;
+        const itemId = item?.idMenu || item?.id || item?._id;
         return String(itemId) !== String(targetId);
       })
     );
@@ -44,33 +71,40 @@ export default function Wishlist() {
       await deleteWishlist(targetId);
     } catch (error) {
       console.error("Gagal menghapus wishlist:", error);
-      setData(previousData);
+      setWishlistItems(previousData);
     }
   };
 
   return (
     <ScrollView className="flex-1 bg-white">
-      {/* Title */}
       <View className="px-5 pt-6 pb-3">
         <Text className="text-2xl font-bold text-gray-900">Saved Dishes</Text>
         <Text className="text-sm text-gray-400">Daftar menu favorit yang kamu simpan</Text>
       </View>
-      
-      {/* List Wishlist */}
+
       <View className="px-5 py-2">
         {loading ? (
           <View className="py-10 items-center">
             <ActivityIndicator size="large" color="#dc2626" />
           </View>
-        ) : data.length === 0 ? (
+        ) : wishlistItems.length === 0 ? (
           <View className="py-10 items-center justify-center">
             <Text className="text-gray-400 font-medium text-base">Belum ada menu tersimpan</Text>
           </View>
         ) : (
-          data.map((item: any, index: number) => {
+          wishlistItems.map((item: any, i: number) => {
             const menuId = item?.idMenu || item?.id || item?._id;
             return (
-              <CardWishlist key={menuId || index} title={item?.name} context={item?.description} image={item?.imageUrl} link={index} onDelete={() => handleDeleteWishlist(menuId)}/>
+              <CardWishlist 
+                key={menuId || i} 
+                title={item?.name} 
+                like={true} 
+                price={item?.price} 
+                context={item?.description} 
+                image={item?.imageUrl || item?.image} 
+                link={item?.originalIndex} // Mengirim index asli dari menu list
+                onDelete={() => handleDeleteWishlist(menuId)} 
+              />
             );
           })
         )}
