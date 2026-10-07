@@ -1,6 +1,6 @@
-import express from "express";
 import { faker } from '@faker-js/faker';
-import Wishlist, { sequelize } from "../model/Sequelize.js";
+import express from "express";
+import { sequelize, Wishlist, Cart } from "../model/Sequelize.js";
 
 const route = express.Router();
 
@@ -112,5 +112,45 @@ route.get("/orderHistory", (req, res) => {
     ]
   });
 });
+
+route.get("/cart", async(req,res) => {
+  const data = await Cart.findAll()
+  console.log(data)
+  res.status(200).json({status:200,message:"Get cart data successfull", data})
+})
+
+route.post("/cart", async(req,res) => {
+  try{
+    const payload = req.body
+    await Cart.create(payload)
+    res.status(200).json({status:200,message:"Post cart data successfull"})
+  }
+  catch(err){
+    res.status(500).json({status:500,message:err})
+  }
+})
+
+route.put("/cart/:id", async(req,res) => {
+  try{
+    const { amount } = req.body
+    const { id } = req.params
+    await Cart.update(amount,{where:{idMenu: id}})
+    res.status(200).json({status:200,message:`Update cart data with id ${id} successfull`})
+  }
+  catch(err){
+    res.status(500).json({status:500,message:err})
+  }
+})
+
+route.delete("/cart/:id", async(req,res) => {
+  try{
+    const { id } = req.params
+    await Cart.destroy({where:{idMenu: id}})
+    res.status(200).json({status:200,message:`Delete cart data with id ${id} successfull`})
+  }
+  catch(err){
+    res.status(500).json({status:500,message:err})
+  }
+})
 
 export default route;

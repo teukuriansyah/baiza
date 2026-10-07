@@ -16,4 +16,11 @@ export const Wishlist = sequelize.define("wishlist", {
   freezeTableName: true
 });
 
-export default Wishlist;
+export const Cart = sequelize.define("cart", {
+  idMenu: DataTypes.STRING,
+  name:DataTypes.STRING,
+  quantity:DataTypes.INTEGER,
+  price:DataTypes.INTEGER
+}, {
+  freezeTableName: true
+});
