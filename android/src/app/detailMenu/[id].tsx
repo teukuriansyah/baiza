@@ -4,7 +4,7 @@ import { Plus, Minus, ArrowLeft, Heart } from 'lucide-react-native';
 import { useLocalSearchParams, router, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import { getDataById } from '@/services/MenuServices';
-import { getWishlist, postWishlist, deleteWishlist } from '@/services/UserServices';
+import { getWishlist, postWishlist, deleteWishlist, getCart, postCart, putCart } from '@/services/UserServices';
 
 const DetailMenu = () => {
   const { id } = useLocalSearchParams();
@@ -12,8 +12,7 @@ const DetailMenu = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [quantity, setQuantity] = useState<number>(1);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-
-  // Function check status wishlist
+  
   const checkWishlistStatus = useCallback(async (targetId: any) => {
     try {
       const rawWishlist = await getWishlist();
@@ -29,7 +28,6 @@ const DetailMenu = () => {
     }
   }, []);
 
-  // Function fetch detail data menu
   const fetching = useCallback(async () => {
     if (!id) return;
     try {
@@ -47,14 +45,18 @@ const DetailMenu = () => {
     }
   }, [id, checkWishlistStatus]);
 
-  // Refetch setiap kali screen dipanggil/fokus
+  const fetchingCart = async() => {
+    const {data} = await getCart()
+    console.log(data)
+  }
+
   useFocusEffect(
     useCallback(() => {
       fetching();
-    }, [fetching])
+      fetchingCart()
+    }, [fetching,fetchingCart])
   );
 
-  // Toggle Wishlist (Optimistic Update)
   const toggleWishlist = async () => {
     const targetId = datas?.idMenu || datas?.id || id;
     if (!targetId) return;

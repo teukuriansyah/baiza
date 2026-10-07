@@ -3,7 +3,7 @@ import { Search } from 'lucide-react-native';
 import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import { getData, getCategory, getDataByCategory } from "../services/MenuServices";
-import { getWishlist, postWishlist, deleteWishlist } from "@/services/UserServices";
+import { getWishlist, postWishlist, deleteWishlist, getCart, postCart } from "@/services/UserServices";
 import ListHome from "../components/ListHome";
 import CardHome from "../components/CardHome";
 
@@ -86,11 +86,17 @@ export default function Index() {
     }
   };
 
+  const fetchingCart = async() => {
+    const {data} = await getCart()
+    console.log(data)
+  }
+
   useFocusEffect(
     useCallback(() => {
       fetchWishlist();
       fetchingData();
-    }, [fetchWishlist, fetchingData])
+      fetchingCart()
+    }, [fetchWishlist, fetchingData, fetchingCart])
   );
 
   return (

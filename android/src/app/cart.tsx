@@ -1,8 +1,24 @@
 import { View, Text, ScrollView } from 'react-native';
 import { Link } from "expo-router"
+import { getCart } from "../services/UserServices"
+import { useState, useCallback } from "react"
+import { useFocusEffect } from "expo-router"
 import CartList from "../components/CartList";
 
 const Cart = () => {
+  const [dataCart,setDataCart] = useState([])
+
+  const fetching = async() => {
+    const {data} = await getCart()
+    setDataCart(data)
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetching();
+    }, [fetching])
+  );
+
   return (
     <View className="flex-1 relative">
       
@@ -14,12 +30,7 @@ const Cart = () => {
 
         {/* Cart */}
         <View className="px-5 py-3 gap-5">
-          <CartList />
-          <CartList />
-          <CartList />
-          <CartList />
-          <CartList />
-          <CartList />
+          {dataCart.map((d:any,i:number) => <CartList key={i}/>)}
         </View>
       </ScrollView>
 

@@ -1,9 +1,11 @@
 import { View, Text, TextInput, ScrollView } from 'react-native';
 import { Search } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from "expo-router"
-import { useState, useEffect } from "react"
-import ListHome from "../components/ListHome";
+import { useState, useCallback } from "react"
+import { useFocusEffect } from "expo-router"
 import { getDataBySearch } from '@/services/MenuServices';
+import { getCart } from '@/services/UserServices';
+import ListHome from "../components/ListHome";
 
 const search = () => {
   const route = useRouter()
@@ -26,10 +28,18 @@ const search = () => {
     console.log(data)
     setDatas(data)
   }
+  
+  const fetchingCart = async() => {
+    const data = await getCart()
+    console.log(data)
+  }
 
-  useEffect(() => {
-    fetching()
-  },[])
+  useFocusEffect(
+    useCallback(() => {
+      fetching()
+      fetchingCart()
+    }, [fetching, fetchingCart])
+  );
   
   return (
     <ScrollView>

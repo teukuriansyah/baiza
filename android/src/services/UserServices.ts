@@ -54,11 +54,11 @@ export async function postCart(payload:Payload) {
 }
 
 export async function putCart(id:string,quantity:number) {
-  const { data } = await api.post(`/orderHistory/${id}`,quantity)
+  const { data } = await api.post(`/cart/${id}`,quantity)
   return data
 }
 
 export async function deleteCart(id:string) {
-  const { data } = await api.post(`/orderHistory/${id}`)
+  const { data } = await api.post(`/cart/${id}`)
   return data
 }
