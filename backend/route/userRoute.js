@@ -115,7 +115,6 @@ route.get("/orderHistory", (req, res) => {
 
 route.get("/cart", async(req,res) => {
   const data = await Cart.findAll()
-  console.log(data)
   res.status(200).json({status:200,message:"Get cart data successfull", data})
 })
 
@@ -132,9 +131,9 @@ route.post("/cart", async(req,res) => {
 
 route.put("/cart/:id", async(req,res) => {
   try{
-    const { amount } = req.body
+    const { quantity } = req.body
     const { id } = req.params
-    await Cart.update(amount,{where:{idMenu: id}})
+    await Cart.update({quantity},{where:{idMenu: id}})
     res.status(200).json({status:200,message:`Update cart data with id ${id} successfull`})
   }
   catch(err){

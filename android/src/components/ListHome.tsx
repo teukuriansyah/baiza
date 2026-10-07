@@ -35,9 +35,6 @@ const ListHome = (props: Props) => {
             </View>
             <View className="flex-row justify-between">
               <Text className="text-lg font-semibold">Rp. {props.price}</Text>
-              <Pressable onPress={(e) => e.stopPropagation()} className="aspect-square bg-gray-100 p-1 rounded-full items-center justify-center">
-                <Plus size={20} color="red" />
-              </Pressable>
             </View>
           </View>
         </View>
