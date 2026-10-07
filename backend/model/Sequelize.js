@@ -19,6 +19,7 @@ export const Wishlist = sequelize.define("wishlist", {
 export const Cart = sequelize.define("cart", {
   idMenu: DataTypes.STRING,
   name:DataTypes.STRING,
+  imageUrl:DataTypes.STRING,
   quantity:DataTypes.INTEGER,
   price:DataTypes.INTEGER
 }, {

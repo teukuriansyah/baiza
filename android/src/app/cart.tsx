@@ -1,6 +1,6 @@
 import { View, Text, ScrollView } from 'react-native';
 import { Link } from "expo-router"
-import { getCart } from "../services/UserServices"
+import { getCart, deleteCart } from "../services/UserServices"
 import { useState, useCallback } from "react"
 import { useFocusEffect } from "expo-router"
 import CartList from "../components/CartList";
@@ -11,6 +11,17 @@ const Cart = () => {
   const fetching = async() => {
     const {data} = await getCart()
     setDataCart(data)
+  }
+
+  const deleteItem = async(id:string) => {
+    try{
+      await deleteCart(id)
+      const {data} = await getCart()
+      setDataCart(data)
+    }
+    catch(err) {
+      console.log(err)
+    }
   }
 
   useFocusEffect(
@@ -30,12 +41,12 @@ const Cart = () => {
 
         {/* Cart */}
         <View className="px-5 py-3 gap-5">
-          {dataCart.map((d:any,i:number) => <CartList key={i}/>)}
+          {dataCart.map((d:any,i:number) => <CartList key={i} title={d.name} image={d.imageUrl} quantity={d.quantity} price={d.price} deleteItem={() => deleteItem(d.idMenu)}/>)}
         </View>
       </ScrollView>
 
       {/* Total price / Bottom Bar */}
-      <View className="bg-white px-5 py-3 flex-row h-20 items-center justify-between absolute bottom-0 w-full border-t border-gray-100">
+      <View className="bg-white px-5 py-3 flex-row h-20 items-center justify-between absolute bottom-0 w-ful l border-t border-gray-100">
         <View>
           <Text className="text-red-900 text-sm">Total Payment</Text>
           <Text className="text-red-600 font-bold text-2xl">Rp. Price</Text>

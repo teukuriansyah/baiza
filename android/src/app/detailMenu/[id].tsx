@@ -61,7 +61,7 @@ const DetailMenu = () => {
     if (!datas?.id) return;
     const item = cart.find((item: any) => String(item.idMenu) === String(datas.id));
     if (item) return await putCart(item.idMenu, quantity);
-    await postCart({ idMenu: datas.id, name: datas.name, quantity, price: datas.price });
+    await postCart({ idMenu: datas.id, name: datas.name, quantity, price: datas.price, imageUrl:datas.imageUrl });
   };
 
   const toggleWishlist = async () => {
