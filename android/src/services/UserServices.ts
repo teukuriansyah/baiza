@@ -8,7 +8,8 @@ interface Payload {
   idMenu:string;
   name:string;
   quantity:number;
-  price:number
+  price:number;
+  imageUrl:string
 }
 
 export async function getDataUser() {
@@ -59,6 +60,6 @@ export async function putCart(id:string,quantity:number) {
 }
 
 export async function deleteCart(id:string) {
-  const { data } = await api.post(`/cart/${id}`)
+  const { data } = await api.delete(`/cart/${id}`)
   return data
 }

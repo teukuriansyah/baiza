@@ -70,7 +70,6 @@ export default function Index() {
   const fetchingCart = useCallback(async () => {
     try {
       const res = await getCart();
-      console.log(res?.data);
     } catch (error) {
       console.error("Cart error:", error);
     }

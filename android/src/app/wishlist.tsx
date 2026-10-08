@@ -102,7 +102,7 @@ export default function Wishlist() {
                 price={item?.price} 
                 context={item?.description} 
                 image={item?.imageUrl || item?.image} 
-                link={item?.originalIndex} // Mengirim index asli dari menu list
+                link={item?.originalIndex}
                 onDelete={() => handleDeleteWishlist(menuId)} 
               />
             );

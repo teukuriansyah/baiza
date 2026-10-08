@@ -11,9 +11,9 @@ const Profile = () => {
     setUser(userData?.data)
   }
   
-    useEffect(() => {
-      fetchingUser()
-    },[])
+  useEffect(() => {
+    fetchingUser()
+  },[])
   return (
     <View className="flex-1 bg-gray-100">
       {/* Profile */}
