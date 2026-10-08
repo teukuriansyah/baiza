@@ -55,9 +55,10 @@ route.get("/user", (req, res) => {
   res.status(200).json({ status: 200, data: user, message: "Get user data successfully" });
 });
 
-route.get("/notification", (req, res) => {
+route.get("/notification",async (req, res) => {
+  const data = await Notification.findAll()
   const dummyDate = faker.date.between({ from: '2026-10-01', to: Date.now() });
-  res.status(200).json({ status: 200, data: notification(dummyDate), message: "Get notification data successfully" });
+  res.status(200).json({ status: 200, data: [...data.reverse(),...notification(dummyDate)], message: "Get notification data successfully" });
 });
 
 route.post("/notification", async(req, res) => {
@@ -112,7 +113,7 @@ route.get("/orderHistory", async(req, res) => {
         category: "Sushi",
         unitPrice: 45000,
         quantity: 2,
-        subtotal: 90000,
+        price: 90000,
         createdAt:"2026-10-06T18:30:15.000Z",
         imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop&q=80",
       }
@@ -120,7 +121,7 @@ route.get("/orderHistory", async(req, res) => {
   });
 });
 
-route.post("/orderHistory",(req,res) => {
+route.post("/orderHistory",async(req,res) => {
   const payload = req.body
   await OrderHistory.create(payload)
   res.status(200).json({status:200,message:"Post order history successfull"})

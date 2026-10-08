@@ -4,7 +4,7 @@ interface Props {
   title:string;
   quantity:number;
   price:number;
-  image:string
+  image:any
 }
 
 export default function OrderSummaryList(props:Props) {

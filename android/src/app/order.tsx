@@ -22,8 +22,8 @@ const order = () => {
         <View>
           <Text className="text-lg font-medium">Past Deliveries</Text>
         </View>
-        <View>
-          {dataOrder?.map((d:any,i:number) => <ListOrder key={i} image={d.imageUrl} title={d.name} price={d.subtotal} context={d?.description} date={d.createdAt.toLocaleString("id-ID")}/>)}
+        <View className='gap-2'>
+          {dataOrder?.map((d:any,i:number) => <ListOrder key={i} image={d.imageUrl} title={d.name} price={d.price} context={d?.description} date={d.createdAt.toLocaleString("id-ID")}/>)}
         </View>
       </View>
     </ScrollView>

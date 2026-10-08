@@ -1,63 +1,80 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native"
 import { useState, useEffect, useCallback } from "react"
-import { getDataUser, getCart, deleteCart, postDataNotification, postOrderHistory } from '@/services/UserServices'
-import { useFocusEffect } from 'expo-router'
-import { MapPin } from 'lucide-react-native'
-import OrderSummaryList from '@/components/OrderSummaryList'
+import { getDataUser, getCart, deleteCart, postDataNotification, postOrderHistory } from "@/services/UserServices"
+import { router, useFocusEffect } from "expo-router"
+import { MapPin } from "lucide-react-native"
+import OrderSummaryList from "@/components/OrderSummaryList"
+
+type CartItem = { idMenu: number; name: string; quantity: number; price: number; imageUrl?: string }
+type User = { name?: string; hp?: string; address?: string }
+
+const formatRupiah = (value: number) => `Rp ${value.toLocaleString("id-ID")}`
 
 export default function Checkout() {
-  const [user, setUser] = useState<any>()
-  const [dataCart, setDataCart] = useState<any>()
-  const [subtotal, setSubtotal] = useState<number>(0)
-  const fetchingUser = async() => {
-    const userData = await getDataUser()
-    setUser(userData?.data)
-  }
-  
-  const fetching = useCallback(async () => {
+  const [user, setUser] = useState<User>()
+  const [dataCart, setDataCart] = useState<CartItem[]>([])
+  const [subtotal, setSubtotal] = useState(0)
+  const [paymentMethod, setPaymentMethod] = useState("QRIS")
+  const [loading, setLoading] = useState(false)
+
+  const serviceCharge = Math.round(subtotal * 0.05)
+  const pb1 = Math.round(subtotal * 0.1)
+  const totalPayment = subtotal + serviceCharge + pb1
+
+  const fetchingUser = useCallback(async () => {
     try {
-      const { data } = await getCart();
-      const rawTotal = data?.map((d:any) => d.quantity*d.price)
-      setDataCart(data || []);
-      setSubtotal(rawTotal.reduce((sum: number, value: number) => sum + value, 0))
+      const { data } = await getDataUser()
+      setUser(data)
     } catch (error) {
-      console.error("Cart error:", error);
+      console.error("User fetch error:", error)
     }
-  }, []);
+  }, [])
+
+  const fetchingCart = useCallback(async () => {
+    try {
+      const { data = [] } = await getCart()
+      const items = data as CartItem[]
+      const total = items.reduce((sum, item) => sum + item.quantity * item.price, 0)
+      setDataCart(items)
+      setSubtotal(total)
+    } catch (error) {
+      console.error("Cart error:", error)
+    }
+  }, [])
 
   const handleCheckout = async () => {
-    const payloadNotification = {
-      title:"Pesanan Sedang Dibuat",
-      message:"Pesanan kamu sedang disiapkan oleh resto.",
-      type:"ORDER_CREATED",
+    if (!dataCart.length) {
+      alert("Keranjang kamu kosong!")
+      return
     }
-    const payloadOrderHistory = {
-      idOrder:123,
-      name:dataCart.map((d:any,i:number) => d.name).join(", "),
-      price:subtotal,
-      imageUrl:dataCart[0].imageUrl
-    }
-    await postDataNotification(payloadNotification)
-    await postOrderHistory(payloadOrderHistory)
-    for(let i = 0;i<dataCart.length;i++) {
-      await deleteCart(dataCart[i].idMenu)
+
+    setLoading(true)
+
+    try {
+      const orderId = `${Date.now()}`
+
+      await postDataNotification({ title: "Pesanan Sedang Dibuat", message: "Pesanan kamu sedang disiapkan oleh resto.", type: "ORDER_CREATED" })
+      await postOrderHistory({ idOrder: orderId, name: dataCart.map((item) => item.name).join(", "), price: totalPayment, imageUrl: dataCart[0]?.imageUrl || "" })
+      await Promise.all(dataCart.map((item:any) => deleteCart(item.idMenu)))
+
+      router.replace("/")
+    } catch (error) {
+      console.error("Checkout error:", error)
+      alert("Gagal membuat pesanan. Silakan coba lagi.")
+    } finally {
+      setLoading(false)
     }
   }
-    
+
   useEffect(() => {
     fetchingUser()
-  },[])
+  }, [fetchingUser])
 
-  useFocusEffect(
-    useCallback(() => {
-      fetching();
-    }, [fetching])
-  );
+  useFocusEffect(useCallback(() => { fetchingCart() }, [fetchingCart]))
+
   return (
     <View className="flex-1 bg-gray-100">
-      {/* Scrollable Content */}
-      <ScrollView contentContainerClassName="pb-24">
-        {/* Address */}
+      <ScrollView contentContainerClassName="pb-28">
         <View className="px-5 py-3">
           <View className="bg-white rounded-xl p-3 flex-row items-start gap-3">
             <View className="bg-red-100 p-2 rounded-full mt-1">
@@ -66,94 +83,82 @@ export default function Checkout() {
             <View className="flex-1">
               <View className="flex-row justify-between items-center">
                 <Text className="text-xl font-semibold">Delivery Address</Text>
-                <Text className="font-medium text-red-600">Change</Text>
+                <Pressable>
+                  <Text className="font-medium text-red-600">Change</Text>
+                </Pressable>
               </View>
-              <View>
-                <View className="mt-2 flex-row gap-1 items-end">
-                  <Text className="font-semibold">{user?.name}</Text>
-                  <Text className="text-sm text-gray-400">{user?.hp}</Text>
+              <View className="mt-2">
+                <View className="flex-row gap-1 items-end">
+                  <Text className="font-semibold">{user?.name || "-"}</Text>
+                  <Text className="text-sm text-gray-400">{user?.hp || ""}</Text>
                 </View>
-                <View className="mt-1">
-                  <Text className="text-gray-600">{user?.address}</Text>
-                </View>
+                <Text className="text-gray-600 mt-1">{user?.address || "Alamat belum diatur"}</Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Order Summary */}
         <View className="px-5 py-3">
-          <View className="px-4 py-2 bg-white rounded-xl">
-            <View>
-              <Text className="text-xl font-semibold">Order Summary</Text>
-            </View>
+          <View className="px-4 py-3 bg-white rounded-xl">
+            <Text className="text-xl font-semibold">Order Summary</Text>
             <View className="mt-4 gap-3">
-              {dataCart?.map((d:any,i:number) => <OrderSummaryList key={i} title={d.name} quantity={d.quantity} price={d.price} image={d.imageUrl}/>)}
+              {dataCart.length > 0 ? dataCart.map((item) => <OrderSummaryList key={item.idMenu} title={item.name} quantity={item.quantity} price={item.price} image={item.imageUrl} />) : <Text className="text-gray-400">Tidak ada item di keranjang.</Text>}
             </View>
           </View>
         </View>
 
-        {/* Payment Method */}
         <View className="px-5 py-3">
-          <View className="px-4 py-2 bg-white rounded-xl">
-            <View>
-              <Text className="text-xl font-semibold">Payment Method</Text>
-            </View>
+          <View className="px-4 py-3 bg-white rounded-xl">
+            <Text className="text-xl font-semibold">Payment Method</Text>
             <View className="mt-4 gap-4">
-              <View className="bg-gray-200 p-2 rounded-xl">
-                <Text className="text-xl font-semibold">QRIS Instant</Text>
-                <Text className="text-sm text-red-900">BCA, Mandiri, GoPay, OVO, ShopeePay via dynamic QR Code</Text>
-              </View>
-              <View className="bg-gray-200 p-2 rounded-xl">
-                <Text className="text-xl font-semibold">E-Wallet (Gopay/OVO)</Text>
-                <Text className="text-sm text-red-900">Pay with your e-wallet</Text>
-              </View>
-              <View className="bg-gray-200 p-2 rounded-xl">
-                <Text className="text-xl font-semibold">Cash on Delivery (COD)</Text>
-                <Text className="text-sm text-red-900">Pay with cash upon delivery directly to the Baiza Rider</Text>
-              </View>
+              <Pressable onPress={() => setPaymentMethod("QRIS")} className={`p-3 rounded-xl ${paymentMethod === "QRIS" ? "bg-red-100 border border-red-600" : "bg-gray-200"}`}>
+                <Text className="text-lg font-semibold">QRIS Instant</Text>
+                <Text className="text-sm text-gray-600">BCA, Mandiri, GoPay, OVO, ShopeePay via dynamic QR Code</Text>
+              </Pressable>
+              <Pressable onPress={() => setPaymentMethod("EWALLET")} className={`p-3 rounded-xl ${paymentMethod === "EWALLET" ? "bg-red-100 border border-red-600" : "bg-gray-200"}`}>
+                <Text className="text-lg font-semibold">E-Wallet (GoPay/OVO)</Text>
+                <Text className="text-sm text-gray-600">Pay with your e-wallet</Text>
+              </Pressable>
+              <Pressable onPress={() => setPaymentMethod("COD")} className={`p-3 rounded-xl ${paymentMethod === "COD" ? "bg-red-100 border border-red-600" : "bg-gray-200"}`}>
+                <Text className="text-lg font-semibold">Cash on Delivery (COD)</Text>
+                <Text className="text-sm text-gray-600">Pay with cash upon delivery directly to the Baiza Rider</Text>
+              </Pressable>
             </View>
           </View>
         </View>
 
-        {/* Payment Breakdown */}
         <View className="px-5 py-3">
-          <View className="px-4 py-2 bg-white rounded-xl">
-            <View>
-              <Text className="text-xl font-semibold">Payment Breakdown</Text>
+          <View className="px-4 py-3 bg-white rounded-xl">
+            <Text className="text-xl font-semibold">Payment Breakdown</Text>
+            <View className="mt-4 gap-2">
+              <View className="flex-row justify-between">
+                <Text className="text-sm text-gray-600">Order Subtotal</Text>
+                <Text className="text-sm font-medium">{formatRupiah(subtotal)}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-sm text-gray-600">Service Charge (5%)</Text>
+                <Text className="text-sm font-medium">{formatRupiah(serviceCharge)}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-sm text-gray-600">PB1 (10%)</Text>
+                <Text className="text-sm font-medium">{formatRupiah(pb1)}</Text>
+              </View>
             </View>
-            <View>    
-              <View className="mt-4 gap-2">
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-red-950">Order Subtotal</Text>
-                  <Text className="text-sm">{subtotal}</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-red-950">Service Charge</Text>
-                  <Text className="text-sm">{subtotal * 0.05}</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-red-950">PB1</Text>
-                  <Text className="text-sm">{subtotal * 0.1}</Text>
-                </View>
-              </View>
-              <View className="mt-4 border-t border-gray-400 items-center flex-row justify-between">
-                <Text className="mt-3 text-xl font-medium">Total Payment</Text>
-                <Text className="mt-3 text-3xl text-red-600 font-bold">Rp. {subtotal + (subtotal * 0.1) + (subtotal * 0.05)}</Text>
-              </View>
+            <View className="mt-4 pt-3 border-t border-gray-200 flex-row justify-between items-center">
+              <Text className="text-lg font-semibold">Total Payment</Text>
+              <Text className="text-2xl text-red-600 font-bold">{formatRupiah(totalPayment)}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
 
-      {/* Place Order Button - Fixed / Absolute Bottom */}
       <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4 flex-row justify-between items-center border-t border-gray-200">
         <View>
           <Text className="text-gray-400 text-xs font-medium">TOTAL PAYABLE</Text>
-          <Text className="text-red-600 font-semibold text-xl">Rp. {subtotal + (subtotal * 0.1) + (subtotal * 0.05)}</Text>
+          <Text className="text-red-600 font-bold text-xl">{formatRupiah(totalPayment)}</Text>
         </View>
-        <Pressable className="bg-red-600 rounded-full px-6 py-3 active:opacity-80">
-          <Text className="text-white font-bold">Place order</Text>
+        <Pressable onPress={handleCheckout} disabled={loading || !dataCart.length} className={`rounded-full px-6 py-3 active:opacity-80 ${loading || !dataCart.length ? "bg-gray-400" : "bg-red-600"}`}>
+          {loading ? <ActivityIndicator color="#ffffff" /> : <Text className="text-white font-bold">Place order</Text>}
         </Pressable>
       </View>
     </View>
