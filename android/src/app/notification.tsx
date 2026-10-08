@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native';
 import { getDataNotification } from "../services/UserServices";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router"
 import ListNotification from "../components/ListNotification";
 
 const Notification = () => {
@@ -15,9 +16,11 @@ const Notification = () => {
     }
   };
 
-  useEffect(() => {
-    fetching();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetching();
+    }, [fetching])
+  );
 
   const isToday = (dateString: string) => {
     if (!dateString) return false;

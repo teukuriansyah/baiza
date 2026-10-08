@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useState, useEffect, useCallback } from "react"
-import { getDataUser, getCart } from '@/services/UserServices'
+import { getDataUser, getCart, deleteCart, postDataNotification, postOrderHistory } from '@/services/UserServices'
 import { useFocusEffect } from 'expo-router'
 import { MapPin } from 'lucide-react-native'
 import OrderSummaryList from '@/components/OrderSummaryList'
@@ -24,6 +24,25 @@ export default function Checkout() {
       console.error("Cart error:", error);
     }
   }, []);
+
+  const handleCheckout = async () => {
+    const payloadNotification = {
+      title:"Pesanan Sedang Dibuat",
+      message:"Pesanan kamu sedang disiapkan oleh resto.",
+      type:"ORDER_CREATED",
+    }
+    const payloadOrderHistory = {
+      idOrder:123,
+      name:dataCart.map((d:any,i:number) => d.name).join(", "),
+      price:subtotal,
+      imageUrl:dataCart[0].imageUrl
+    }
+    await postDataNotification(payloadNotification)
+    await postOrderHistory(payloadOrderHistory)
+    for(let i = 0;i<dataCart.length;i++) {
+      await deleteCart(dataCart[i].idMenu)
+    }
+  }
     
   useEffect(() => {
     fetchingUser()

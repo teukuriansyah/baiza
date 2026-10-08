@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import express from "express";
-import { sequelize, Wishlist, Cart } from "../model/Sequelize.js";
+import { sequelize, Wishlist, Cart, OrderHistory, Notification } from "../model/Sequelize.js";
 
 const route = express.Router();
 
@@ -60,6 +60,12 @@ route.get("/notification", (req, res) => {
   res.status(200).json({ status: 200, data: notification(dummyDate), message: "Get notification data successfully" });
 });
 
+route.post("/notification", async(req, res) => {
+  const payload = req.body
+  await Notification.create(payload)
+  res.status(200).json({status:200,message:"Post notification successful"})
+});
+
 route.get("/wishlist", async (req, res) => {
   try {
     const datas = await Wishlist.findAll();
@@ -93,11 +99,12 @@ route.delete("/wishlist/:id", async (req, res) => {
   }
 });
 
-route.get("/orderHistory", (req, res) => {
+route.get("/orderHistory", async(req, res) => {
+  const data = await OrderHistory.findAll()
   res.status(200).json({
     status: 200,
     message: "Get history order successful",
-    items: [
+    items: [...data.reverse(),
       {
         menuId: "MENU_01",
         name: "Salmon Aburi Roll",
@@ -112,6 +119,12 @@ route.get("/orderHistory", (req, res) => {
     ]
   });
 });
+
+route.post("/orderHistory",(req,res) => {
+  const payload = req.body
+  await OrderHistory.create(payload)
+  res.status(200).json({status:200,message:"Post order history successfull"})
+})
 
 route.get("/cart", async(req,res) => {
   const data = await Cart.findAll()

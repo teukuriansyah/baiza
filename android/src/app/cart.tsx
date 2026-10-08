@@ -84,7 +84,7 @@ const Cart = () => {
         </View>
 
         <View className="bg-red-600 rounded-full px-5 py-3">
-          <Link href="/checkout">
+          <Link href={`${dataCart.length == 0 ? "/" : "/checkout"}`}>
             <Text className="text-white font-medium">Proceed to checkout</Text>
           </Link>
         </View>

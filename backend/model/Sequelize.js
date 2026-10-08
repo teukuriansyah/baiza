@@ -25,3 +25,20 @@ export const Cart = sequelize.define("cart", {
 }, {
   freezeTableName: true
 });
+
+export const OrderHistory = sequelize.define("orderHistory", {
+  idOrder: DataTypes.STRING,
+  name:DataTypes.STRING,
+  imageUrl:DataTypes.STRING,
+  price:DataTypes.INTEGER
+}, {
+  freezeTableName: true
+});
+
+export const Notification = sequelize.define("notification", {
+  title:DataTypes.STRING,
+  message:DataTypes.STRING,
+  type:DataTypes.STRING
+}, {
+  freezeTableName: true
+});

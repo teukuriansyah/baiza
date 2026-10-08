@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL:"https://estrogen-verbally-caution.ngrok-free.dev"
 })
 
-interface Payload {
+interface PayloadCart {
   idMenu:string;
   name:string;
   quantity:number;
@@ -19,6 +19,11 @@ export async function getDataUser() {
 
 export async function getDataNotification() {
   const { data } = await api.get("/notification")
+  return data
+}
+
+export async function postDataNotification(payload:any) {
+  const { data } = await api.post("/notification",payload)
   return data
 }
 
@@ -44,12 +49,17 @@ export async function getOrderHistory() {
   return data
 }
 
+export async function postOrderHistory(payload:any) {
+  const { data } = await api.post("/orderHistory",payload)
+  return data
+}
+
 export async function getCart() {
   const { data } = await api.get(`/cart`)
   return data
 }
 
-export async function postCart(payload:Payload) {
+export async function postCart(payload:PayloadCart) {
   const { data } = await api.post(`/cart`,payload)
   return data
 }
